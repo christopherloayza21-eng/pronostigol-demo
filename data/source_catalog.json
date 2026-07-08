@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-06-21T00:23:48.519397+00:00",
+  "sources": [
+    {
+      "name": "players.csv",
+      "type": "CSV",
+      "records": 1241,
+      "purpose": "Estadísticas individuales del Mundial 2026"
+    },
+    {
+      "name": "SquadLists-Spanish.pdf",
+      "type": "PDF oficial FIFA",
+      "records": 1248,
+      "purpose": "Planteles, clubes, talla, internacionalidades y goles"
+    },
+    {
+      "name": "MEDIA - FWC26 ref.pdf",
+      "type": "PDF oficial FIFA",
+      "records": 170,
+      "purpose": "Árbitros, asistentes y oficiales de video"
+    },
+    {
+      "name": "WorldCup2026.xlsx",
+      "type": "XLSX",
+      "records": 1105,
+      "purpose": "Mundial 2026, eliminatorias, estadísticas, xG y cuotas históricas",
+      "sourcePath": "C:\\Users\\chris\\Downloads\\WorldCup2026.xlsx",
+      "fileSize": 149673,
+      "sha256": "f0ed32638c18b86e3473a1454ac0abc47135bfce0b02d24ed3f62aeec399f4ea",
+      "observedAt": "2026-06-20T23:24:09.883763+00:00"
+    },
+    {
+      "name": "Cuotas de apuestas y partidos de Campeonato del Mundo 2026, Fútbol Mundial _ CuotasAhora.html",
+      "type": "HTML",
+      "records": 40,
+      "purpose": "Fotografía de calendario y cuotas 1X2 del Mundial 2026",
+      "sourcePath": "F:\\Cuotas de apuestas y partidos de Campeonato del Mundo 2026, Fútbol Mundial _ CuotasAhora.html",
+      "fileSize": 606925,
+      "sha256": "d144ad37c997cc13362d4bd20a6ad639f1471c36894cb87a7dbb19acd524fb78",
+      "observedAt": "2026-06-20T23:29:19.159308+00:00"
+    },
+    {
+      "name": "all-euro-data-2025-2026.xlsx",
+      "type": "XLSX",
+      "records": 7646,
+      "purpose": "Entrenamiento de mercados, cuotas de cierre, árbitros y estadísticas de clubes",
+      "sourcePath": "C:\\Users\\chris\\Downloads\\all-euro-data-2025-2026.xlsx",
+      "fileSize": 5201706,
+      "sha256": "008defe4ede56438c38d99cb6c029ab541529026039ec0acd7df45e8724d570e",
+      "observedAt": "2026-06-20T23:17:31.775817+00:00"
+    },
+    {
+      "name": "Latest_Results.csv",
+      "type": "CSV",
+      "records": 11,
+      "purpose": "Resultados europeos recientes; conservado como fuente secundaria, no aplicado a selecciones",
+      "sourcePath": "C:\\Users\\chris\\Downloads\\Latest_Results.csv",
+      "fileSize": 1524,
+      "sha256": "8c85408372b0634f315e95811543590832e97c9a5617ea7d98df75d84a2911bf",
+      "observedAt": "2026-06-20T23:18:03.697829+00:00"
+    }
+  ]
+}

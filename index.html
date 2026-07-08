@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071610">
+  <title>PronostiGol — Analizador de partidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="manual.css">
+  <link rel="stylesheet" href="worldcup.css">
+  <link rel="stylesheet" href="advanced.css?v=3">
+  <link rel="stylesheet" href="history.css?v=8">
+  <link rel="stylesheet" href="tournament.css?v=7">
+  <link rel="stylesheet" href="lab.css?v=4">
+  <link rel="stylesheet" href="official.css?v=2">
+  <link rel="stylesheet" href="personnel.css?v=1">
+  <link rel="stylesheet" href="decision.css?v=1">
+  <link rel="stylesheet" href="leagues.css?v=10">
+</head>
+<body>
+  <div class="glow glow-a"></div><div class="glow glow-b"></div>
+  <header>
+    <a class="brand" href="#"><span class="brand-ball">P</span><span>Pronosti<span>Gol</span></span></a>
+    <div class="status"><i></i><span id="sourceStatus">Modo demostracion</span></div>
+  </header>
+  <nav class="app-tabs" aria-label="Secciones de PronostiGol">
+    <button class="app-tab active" data-tab="matches">Partidos</button>
+    <button class="app-tab" data-tab="leagues">Ligas</button>
+    <button class="app-tab" data-tab="bracket">Cuadro</button>
+    <button class="app-tab" data-tab="forecast">Pronóstico</button>
+    <button class="app-tab" data-tab="value">Valor</button>
+    <button class="app-tab" data-tab="lab">Laboratorio</button>
+    <button class="app-tab" data-tab="history">Historial</button>
+  </nav>
+
+  <main>
+    <section class="hero" data-app-view="matches">
+      <div class="eyebrow"><span></span> ANALISIS DE FORMA RECIENTE</div>
+      <h1>Convierte los últimos 10 partidos<br>en un pronóstico <em>entendible.</em></h1>
+      <p>Compara rendimiento, goles y localía. Obtén probabilidades y marcadores posibles, con cada factor a la vista.</p>
+    </section>
+
+    <section class="setup card" data-app-view="matches">
+      <div class="setup-head">
+        <div><small>NUEVO ANÁLISIS</small><h2>Configura el encuentro</h2></div>
+        <div class="setup-actions"><button class="link-button worldcup-link" id="loadLocalWorldCup">◉ Mundial incluido</button><button class="link-button fbref-link" id="toggleFbref">＋ Importar FBref</button><button class="link-button manual-link" id="toggleManual">✎ Carga manual / CSV</button><button class="link-button" id="toggleApi">⚙ Conectar API</button></div>
+      </div>
+      <div class="api-panel hidden" id="apiPanel">
+        <label>Clave API <input id="apiKey" type="password" placeholder="API-Football key" autocomplete="off"></label>
+        <label>Competición / torneo <select id="competition"><optgroup label="Selecciones"><option value="WC" selected>🌎 Mundial 2026 — historial internacional</option></optgroup><optgroup label="Clubes"><option value="PL">Premier League</option><option value="PD">La Liga</option><option value="SA">Serie A</option><option value="BL1">Bundesliga</option><option value="FL1">Ligue 1</option><option value="CL">Champions League</option><option value="BSA">Brasileirão</option></optgroup></select></label>
+        <button class="secondary" id="loadTeams">Cargar equipos</button>
+        <p id="providerHint"><b>Modo selecciones:</b> requiere una clave de <a href="https://dashboard.api-football.com/register" target="_blank" rel="noreferrer">API-Football</a>. Los 10 partidos se buscan sin filtro de torneo e incluyen amistosos, eliminatorias, Copa América, Eurocopa, Nations League y Mundial cuando estén disponibles.</p>
+      </div>
+      <div class="manual-panel hidden" id="manualPanel">
+        <div class="manual-intro"><div><small>MODO GRATUITO</small><h3>Últimos 10 partidos internacionales</h3></div><p>Un partido por línea, del más reciente al más antiguo. Formato: <code>2-0, L, Amistoso</code>. Usa <b>L</b> si jugó como local y <b>V</b> si jugó como visitante.</p></div>
+        <div class="manual-grid">
+          <section><label>Selección local<input id="manualHomeName" value="Argentina" autocomplete="off"></label><label class="file-label">Cargar CSV<input id="homeCsv" type="file" accept=".csv,.txt"></label><textarea id="manualHomeResults" rows="10" placeholder="2-0, L, Amistoso&#10;1-1, V, Eliminatorias&#10;3-1, L, Copa América"></textarea><span class="line-count" id="homeCount">0 de 10 partidos</span></section>
+          <section><label>Selección visitante<input id="manualAwayName" value="España" autocomplete="off"></label><label class="file-label">Cargar CSV<input id="awayCsv" type="file" accept=".csv,.txt"></label><textarea id="manualAwayResults" rows="10" placeholder="1-0, L, Nations League&#10;2-2, V, Amistoso&#10;2-0, L, Eurocopa"></textarea><span class="line-count" id="awayCount">0 de 10 partidos</span></section>
+        </div>
+        <div class="manual-help"><b>También acepta CSV:</b> <code>goles_favor,goles_contra,localia,torneo</code>. No incluyas penales; utiliza el resultado al terminar el tiempo reglamentario o la prórroga.</div>
+      </div>
+      <div class="fbref-panel hidden" id="fbrefPanel">
+        <div><small>IMPORTADOR OFFLINE</small><h3>Agregar perfiles avanzados de FBref</h3><p>Selecciona juntos los HTML 2025 y 2026 que guardaste con <b>Ctrl + S</b>. Se procesan dentro de tu navegador: no se envían ni vuelven a descargarse.</p></div>
+        <label class="fbref-drop">Seleccionar archivos HTML<input id="fbrefFiles" type="file" accept=".html,.htm" multiple></label>
+        <div class="fbref-status" id="fbrefStatus">Todavía no hay perfiles FBref importados.</div>
+        <button class="clear-data" id="clearFbref">Borrar perfiles importados</button>
+      </div>
+      <div class="teams">
+        <div class="team-side">
+          <span class="tag">LOCAL</span>
+          <div class="team-picker"><div class="crest home">L</div><select id="homeTeam"><option value="demo-home">Atlético Central</option></select></div>
+          <span class="venue">Juega en casa</span>
+        </div>
+        <div class="versus"><span></span><b>VS</b><span></span></div>
+        <div class="team-side away-side">
+          <span class="tag">VISITANTE</span>
+          <div class="team-picker reverse"><div class="crest away">V</div><select id="awayTeam"><option value="demo-away">Deportivo Norte</option></select></div>
+          <span class="venue">Juega fuera</span>
+        </div>
+      </div>
+      <section class="prematch-panel hidden" id="prematchPanel">
+        <div class="prematch-head"><div><small>CONTEXTO DEL PARTIDO</small><h3>Alineaciones, ausencias y árbitro</h3></div><span id="prematchCoverage">Estimación previa</span></div>
+        <p class="prematch-note">El once se estima con titularidades, minutos y experiencia. Cambia el estado de un jugador cuando tengas información confirmada.</p>
+        <div class="lineup-grid"><article><div class="lineup-title"><b id="homeLineupName">Local</b><span id="homeLineupConfidence">—</span></div><div class="lineup-list" id="homeLineup"></div></article><article><div class="lineup-title"><b id="awayLineupName">Visitante</b><span id="awayLineupConfidence">—</span></div><div class="lineup-list" id="awayLineup"></div></article></div>
+        <div class="referee-panel"><div><label>Árbitro asignado<select id="matchReferee"><option value="">Sin confirmar</option></select></label><small id="refereeSource">Lista FIFA cargada · sin designación confirmada</small></div><label>Tarjetas / partido<input id="refereeCards" type="number" min="0" max="15" step="0.1" placeholder="Sin dato"></label><label>Faltas / partido<input id="refereeFouls" type="number" min="0" max="50" step="0.1" placeholder="Sin dato"></label><div class="referee-impact" id="refereeImpact">Sin ajuste arbitral</div></div>
+      </section>
+      <button class="primary" id="analyze"><span>Generar pronóstico</span><b>→</b></button>
+      <div class="message hidden" id="message"></div>
+    </section>
+
+    <section class="system-control card" id="systemControl" data-app-view="matches">
+      <div class="panel-title"><div><small>CENTRO DE CONTROL</small><h3>Salud y sincronizacion</h3></div><span id="systemControlStatus">Pendiente</span></div>
+      <div class="system-health-grid" id="systemHealthGrid"></div>
+      <div class="system-actions">
+        <button class="secondary" id="recalculateAll" type="button">Recalcular todo</button>
+        <button class="secondary" id="exportDayReport" type="button">Exportar dia</button>
+        <label class="playable-toggle"><input id="globalPlayableOnly" type="checkbox"> Solo apuestas jugables</label>
+      </div>
+      <p class="bet-disclaimer">Usalo cuando registres resultados: actualiza historial, partidos, cuadro, laboratorio y reportes del dia.</p>
+    </section>
+
+    <section class="tournament-hub hidden" id="tournamentHub" data-app-view="matches">
+      <div class="section-title"><div><small>AGENDA DEL MUNDIAL</small><h2>Partidos por día</h2></div><span class="sample" id="fixtureTotal">104 partidos</span></div>
+      <div class="calendar-controls card"><button id="previousDay">‹</button><input id="fixtureDate" type="date"><button id="nextDay">›</button><button id="todayFixtures">Hoy</button><select id="fixtureGroup"><option value="">Todos los grupos</option></select><select id="fixtureRound"><option value="">Todas las fases</option></select><select id="fixtureTeam"><option value="">Todas las selecciones</option></select></div>
+      <div class="fixture-grid" id="fixtureGrid"></div>
+      <div class="tournament-columns">
+        <article class="card standings-panel"><div class="panel-title"><h3>Tabla de posiciones</h3><select id="standingGroup"></select></div><div id="standingsTable"></div></article>
+        <article class="card ranking-panel"><div class="panel-title"><h3>Ranking de fuerza</h3><span>Elo propio</span></div><div id="rankingList"></div></article>
+      </div>
+      <article class="card team-profile-panel hidden" id="teamProfilePanel"></article>
+    </section>
+    <section class="league-section" data-app-view="leagues">
+      <div class="section-title"><div><small>MODO CLUBES</small><h2 id="leagueSectionTitle">Ligas: historico y pronostico</h2></div><span class="sample" id="leagueStorageStatus">Pendiente de cargar</span></div>
+      <article class="card league-loader">
+        <div><h3>Base de ligas</h3><p>Usa el archivo europeo importado: resultados, tiros, tiros al arco, faltas, córners, tarjetas, árbitros y cuotas de apertura/cierre.</p></div>
+        <button class="secondary" id="loadLeagueData">Cargar ligas guardadas</button>
+      </article>
+      <div class="league-controls card">
+        <label>Temporada<select id="leagueSeason"><option value="2025-2026">2025-2026 base histórica</option><option value="2026-2027" selected>2026-2027 nueva temporada</option></select></label>
+        <label>Tipo de partido<select id="leagueMatchType"><option value="league" selected>Liga oficial</option><option value="friendly">Amistoso / pretemporada</option><option value="cup">Copa</option></select></label>
+        <label>Liga / copa base<select id="leagueDivision"><option value="">Carga las ligas</option></select></label>
+        <label>Fecha partido<input id="leagueMatchDate" type="date"></label>
+        <label>Local<select id="leagueHome"><option value="">—</option></select></label>
+        <label>Visitante<select id="leagueAway"><option value="">—</option></select></label>
+        <button class="primary league-analyze" id="analyzeLeagueMatch">Generar pronostico</button>
+      </div>
+      <article class="card club-calendar-panel hidden" id="clubCalendarPanel">
+        <div class="panel-title"><div><small>AGENDA DE CLUBES</small><h3>Calendario manual + API</h3></div><span id="clubCalendarStatus">0 partidos</span></div>
+        <div class="club-calendar-tools">
+          <button class="secondary" id="clubCalendarPrev" type="button">‹</button>
+          <label>Fecha<input id="clubCalendarDate" type="date"></label>
+          <button class="secondary" id="clubCalendarToday" type="button">Hoy</button>
+          <button class="secondary" id="clubCalendarNext" type="button">›</button>
+        </div>
+        <div class="club-import-grid">
+          <div>
+            <h4>Importar partidos manuales</h4>
+            <p class="bet-disclaimer">Formatos: <b>Local, Visitante, Fecha, Tipo, Liga</b> o <b>Fecha, Local, Visitante, Tipo, Liga</b>. Puedes escribir nombres normales: LaLiga, Premier League, Serie A, Champions.</p>
+            <p class="club-import-help">Ejemplos: Barcelona, Como, 2026-07-10, Amistoso, LaLiga · 2026-07-10, Real Madrid, Juventus, Copa, Champions</p>
+          </div>
+          <label>Competicion por defecto<select id="clubFixtureCompetition"><option value="">Deducir por equipo</option><option value="SP1">LaLiga</option><option value="E0">Premier League</option><option value="I1">Serie A</option><option value="D1">Bundesliga</option><option value="F1">Ligue 1</option><option value="UCL">Champions League</option><option value="UEL">Europa League</option><option value="UECL">Conference League</option></select></label>
+          <textarea id="clubFixtureImport" rows="4" placeholder="Barcelona, Como, 2026-07-10, Amistoso, LaLiga&#10;2026-07-10, Real Madrid, Juventus, Copa, Champions"></textarea>
+          <button class="secondary" id="importClubFixtures" type="button">Importar agenda</button>
+        </div>
+        <div class="club-fixture-list" id="clubFixtureList"></div>
+      </article>
+      <div class="league-dashboard" id="leagueDashboard"></div>
+      <article class="card league-table-panel hidden" id="leagueTablePanel"></article>
+      <article class="card league-weights hidden" id="leagueWeightsPanel"></article>
+      <div class="league-result-grid">
+        <article class="card league-prediction hidden" id="leaguePrediction"></article>
+        <article class="card league-markets hidden" id="leagueMarkets"></article>
+      </div>
+      <div class="league-save-row hidden" id="leagueSaveRow"><button class="save-prediction" id="saveLeaguePrediction">Guardar pronóstico de club</button><span>Se guardan probabilidades, marcador y mercados para compararlo con resultados sincronizados.</span></div>
+      <article class="card league-history-panel hidden" id="leagueHistoryPanel"></article>
+      <p class="disclaimer">La temporada 2025-2026 se usa como base historica. En Liga oficial se eligen clubes de la misma división; en Amistoso o Copa puedes cruzar equipos de distintas ligas y el sistema usa el perfil propio de cada club.</p>
+    </section>
+    <section class="bracket-section" data-app-view="bracket">
+      <div class="section-title"><div><small>FASE ELIMINATORIA</small><h2>Cuadro eliminatorio</h2></div><span class="sample">Round of 32 · Octavos · Cuartos · Semis · Final</span></div>
+      <article class="card bracket-panel"><div class="panel-title"><h3>Llaves del Mundial</h3><span>Se completa al cargar clasificados/resultados</span></div><div class="bracket-grid" id="bracketGrid"></div></article>
+    </section>
+
+    <section id="results" class="results hidden" data-app-view="forecast">
+      <div class="section-title"><div><small>RESULTADO DEL MODELO</small><h2 id="matchTitle">Pronóstico</h2></div><span class="sample" id="sampleSize">20 partidos analizados</span></div>
+      <div class="outcome-grid">
+        <article class="prediction card">
+          <div class="prediction-top"><span>MARCADOR REPRESENTATIVO DEL 1X2</span><span class="confidence" id="confidence">Confianza media</span></div>
+          <div class="scoreline"><div><b id="homeInitial">A</b><span id="homeShort">Local</span></div><strong><span id="scoreHome">2</span><i>:</i><span id="scoreAway">1</span></strong><div><b id="awayInitial">D</b><span id="awayShort">Visita</span></div></div>
+          <p id="predictionText"></p>
+          <div class="extras"><span><i id="goalsPickLabel">Línea de goles</i> <b id="overProb">—</b></span><span><i id="bttsPickLabel">Ambos marcan</i> <b id="bttsProb">—</b></span></div>
+        </article>
+        <article class="probabilities card">
+          <span>PROBABILIDAD DE RESULTADO</span>
+          <div id="probRows"></div>
+        </article>
+      </div>
+      <div class="save-prediction-row"><button class="save-prediction" id="savePrediction">Guardar este pronóstico antes del partido</button><span>Se conservarán los porcentajes y estadísticas actuales.</span></div>
+      <article class="card advanced-markets hidden" id="advancedMarkets"></article>
+      <div class="form-grid">
+        <article class="card form-card" id="homeForm"></article>
+        <article class="card form-card" id="awayForm"></article>
+      </div>
+      <article class="card methodology">
+        <div><span class="method-icon">∿</span><div><h3>Cómo se calculó</h3><p>Los partidos más recientes pesan más. El modelo combina goles a favor y en contra, forma por puntos y localía; luego simula marcadores con una distribución de Poisson.</p></div></div>
+        <button id="toggleDetails">Ver detalle del cálculo⌄</button>
+        <div class="details hidden" id="details"></div>
+      </article>
+      <article class="card model-intelligence-panel" id="modelIntelligencePanel"></article>
+      <article class="card explanation-panel" id="explanationPanel"></article>
+      <article class="card betting-panel" id="bettingPanel"></article>
+      <p class="disclaimer">Pronóstico estadístico orientativo. No garantiza resultados ni sustituye un análisis profesional.</p>
+    </section>
+    <section class="value-decision-section" id="valueDecisionSection" data-app-view="value">
+      <div class="section-title"><div><small>DECISIÓN CON CUOTA REAL</small><h2>Valor de apuesta</h2></div><span class="sample">Cuota justa · edge · entrar/pasar</span></div>
+      <div class="value-decision-grid">
+        <article class="card decision-card">
+          <div class="panel-title"><h3>Comparar con Bettsson / casa</h3><span id="decisionMatchLabel">Genera un pronóstico</span></div>
+          <label>Mercado del modelo<select id="decisionMarket"><option value="">Genera primero un pronóstico</option></select></label>
+          <div class="decision-inputs">
+            <label>Cuota de la casa<input id="decisionOdds" type="number" min="1.01" step="0.01" placeholder="Ej. 1.72"></label>
+            <label class="line-match"><input id="decisionLineMatch" type="checkbox"> La línea de la casa coincide exactamente</label>
+          </div>
+          <div class="decision-output" id="decisionOutput">
+            <div class="decision-state read"><b>SOLO LECTURA</b><span>Elige un mercado y escribe la cuota real para comparar.</span></div>
+          </div>
+        </article>
+        <article class="card decision-guide">
+          <div class="panel-title"><h3>Regla de entrada</h3><span>Más estricto, menos ruido</span></div>
+          <div class="decision-rule-list">
+            <div><b>1</b><span>La línea debe ser idéntica. Si PronostiGol dice -3.5, no lo compares con -2.5 ni +1.5.</span></div>
+            <div><b>2</b><span>La cuota debe superar la cuota justa y dejar mínimo +5% de edge.</span></div>
+            <div><b>3</b><span>Tarjetas, faltas y tiros al arco quedan como prueba/simulación hasta tener más muestra.</span></div>
+          </div>
+          <p class="decision-note">Si una casa paga muy bajo una línea probable, el pick puede salir pero no tener valor. Pasar también es una decisión.</p>
+        </article>
+      </div>
+    </section>
+    <section class="bet-lab" id="betLab" data-app-view="lab">
+      <div class="section-title lab-heading"><div><small>PRUEBA SIN DINERO REAL</small><h2>Laboratorio de apuestas</h2></div><span class="sample">Backtesting · valor · simulación</span></div>
+      <div class="lab-window card"><div><b>Backtesting cronológico protegido</b><span>Recalcula cada partido usando únicamente información anterior a su fecha</span></div><div class="lab-window-buttons"><button class="active" data-window="20">Últimos 20</button><button data-window="50">Últimos 50</button><button data-window="all">Todos</button></div></div>
+      <div class="lab-backtest" id="labBacktest"></div>
+      <article class="card forward-sample-panel" id="forwardSamplePanel"></article>
+      <div class="lab-audit" id="labAudit"></div>
+      <div class="lab-diagnostics" id="labDiagnostics"></div>
+      <div class="lab-product-grid">
+        <article class="card calibration-panel" id="calibrationPanel"></article>
+        <article class="card breakdown-panel" id="performanceBreakdown"></article>
+      </div>
+      <div class="lab-product-grid intelligence-grid">
+        <article class="card market-ranking-panel" id="marketRankingPanel"></article>
+        <article class="card team-heatmap-panel" id="teamHeatmapPanel"></article>
+      </div>
+      <article class="card error-panel">
+        <div class="panel-title"><div><small>APRENDER DE LOS FALLOS</small><h3>Dashboard de errores</h3></div><select id="errorMarket"><option value="winner">Ganador 1X2</option><option value="exact">Marcador exacto</option><option value="over">Over / Under 2.5</option><option value="btts">Ambos marcan</option></select></div>
+        <div id="errorDashboard"></div>
+      </article>
+      <div class="lab-columns">
+        <article class="card value-card">
+          <div class="panel-title"><h3>Calculadora de valor</h3><span>Cuota justa del modelo</span></div>
+          <label>Mercado<select id="labMarket"><option value="">Genera primero un pronóstico</option></select></label>
+          <div class="value-inputs"><label>Cuota inicial<input id="bookmakerOdds" type="number" min="1.01" step="0.01" placeholder="Ej. 1.85"></label><label>Apuesta ficticia<input id="paperStake" type="number" min="1" step="1" value="10"></label></div>
+          <div class="value-results" id="valueResults"><div><span>PROBABILIDAD</span><b>—</b></div><div><span>CUOTA JUSTA</span><b>—</b></div><div><span>VENTAJA</span><b>—</b></div></div>
+          <div class="stake-guard" id="stakeGuard"></div>
+          <button class="kelly-button" id="useKellyStake" disabled>Usar Kelly ¼ limitado en simulación</button>
+          <button class="lab-primary" id="addPaperBet" disabled>Agregar a simulación</button>
+          <p class="lab-toast" id="labToast"></p>
+        </article>
+        <article class="card value-guide">
+          <div class="panel-title"><h3>Cómo leer el valor</h3><span>No basta con acertar</span></div>
+          <p>La cuota justa es <b>1 ÷ probabilidad</b>. Hay valor estadístico cuando la cuota inicial ofrecida supera suficientemente la cuota justa.</p>
+          <div class="value-scale"><div><i class="good"></i><span><b>Valor positivo</b>Ventaja estimada mayor a 5%</span></div><div><i class="watch"></i><span><b>Valor pequeño</b>Entre 0% y 5%</span></div><div><i class="bad"></i><span><b>Sin valor</b>La cuota no compensa el riesgo</span></div></div>
+          <p>Kelly se usa exclusivamente en la simulación: aplicamos solo una cuarta parte de su resultado y un máximo del 2% del saldo inicial.</p>
+          <p>Después puedes registrar la cuota de cierre. Un CLV positivo indica que tomaste un precio mejor que el disponible al cerrar el mercado.</p>
+          <p class="lab-note">Las probabilidades del modelo pueden estar equivocadas. Una cuota con valor no garantiza que la apuesta gane.</p>
+        </article>
+      </div>
+      <article class="card paper-panel">
+        <div class="paper-head"><div><small>MODO SIMULACIÓN</small><h3>Mis apuestas ficticias</h3></div><label>Saldo inicial<input id="paperBankroll" type="number" min="1" step="10" value="1000"></label></div>
+        <div class="paper-summary" id="paperSummary"></div>
+        <div class="paper-alerts" id="paperAlerts"></div>
+        <div class="paper-performance" id="paperPerformance"></div>
+        <div class="paper-list" id="paperBetList"></div>
+      </article>
+      <p class="disclaimer">Este laboratorio sirve para medir el modelo sin arriesgar dinero. No recomienda importes ni garantiza rentabilidad.</p>
+    </section>
+    <section class="history-section" id="historySection" data-app-view="history">
+      <div class="section-title history-heading"><div><small>CONTROL DE RENDIMIENTO · <span id="databaseStatus">Almacenamiento local</span></small><h2>Historial de pronósticos</h2></div><span class="sample" id="historyCount">0 guardados</span></div>
+      <div class="history-tools card">
+        <button class="history-filter active" data-history-filter="all" type="button">Todos</button>
+        <button class="history-filter" data-history-filter="pending" type="button">Pendientes</button>
+        <button class="history-filter" data-history-filter="done" type="button">Evaluados</button>
+        <button class="history-filter" data-history-filter="hits" type="button">Acertados</button>
+        <button class="history-filter" data-history-filter="misses" type="button">Fallados</button>
+        <button class="history-filter" data-history-filter="knockout" type="button">Eliminatorias</button>
+      </div>
+      <div class="history-summary" id="historySummary"></div>
+      <div class="history-list" id="historyList"></div>
+    </section>
+  </main>
+  <script src="app.js?v=26"></script>
+  <script src="tournament.js?v=18"></script>
+  <script src="lab.js?v=12"></script>
+  <script src="leagues.js?v=14"></script>
+</body>
+</html>

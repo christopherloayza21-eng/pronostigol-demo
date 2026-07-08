@@ -1,0 +1,12 @@
+.official-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+.official-pick{display:grid;grid-template-columns:1fr auto;gap:4px 8px;background:#091b14;border:1px solid #294138;border-radius:9px;padding:11px}
+.official-pick small{grid-column:1/-1;color:#82978e;font-size:8px;text-transform:uppercase}
+.official-pick span{font-size:10px}
+.official-pick b{color:#64e39e;font:700 13px Manrope}
+.official-pick.experimental{border-color:#665723}
+.official-pick.abstain{border-color:#665723;background:#211e12}
+.official-pick.abstain b{color:#f5cc64;font-size:11px}
+.official-pick em{color:#f5cc64;font-size:7px;font-style:normal}
+.extras i{font-style:normal}
+@media(max-width:800px){.official-picks{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.official-picks{grid-template-columns:1fr}}

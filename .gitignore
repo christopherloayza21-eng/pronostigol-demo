@@ -1,0 +1,10 @@
+﻿config/football-data.key
+data/*.local.json
+*.local.json
+tmp/
+outputs/
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
