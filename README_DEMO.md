@@ -7,7 +7,10 @@ historial privado, simulaciones personales, cache, ZIPs ni archivos temporales.
 
 1. Abre esta carpeta.
 2. Ejecuta INICIAR_PRONOSTIGOL.bat.
-3. Entra a http://localhost:8000.
+3. Entra a http://localhost:8010.
+
+El puerto 8010 se usa para no mezclar el historial privado guardado por tu
+version original en localhost:8000.
 
 ## Datos incluidos
 
